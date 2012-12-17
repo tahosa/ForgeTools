@@ -20,7 +20,7 @@ public class DimIDCommand extends CommandBase
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		
-		sender.sendChatToPlayer("\u00a72You are currently in " + player.worldObj.getWorldInfo().getWorldName() + " " +
+		sender.sendChatToPlayer("You are currently in " + player.worldObj.getWorldInfo().getWorldName() + " " +
 								player.worldObj.provider.getDimensionName() + " (dim id " + player.worldObj.provider.dimensionId + ")");
 	}
 
