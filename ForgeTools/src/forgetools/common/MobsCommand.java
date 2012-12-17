@@ -20,6 +20,11 @@ public class MobsCommand extends CommandBase
 	{
 		return "mobs";
 	}
+	
+	public String getCommandUsage(ICommandSender par1ICommandSender)
+    {
+    	return "/mobs [detail | total]";
+    }
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] args)
@@ -28,7 +33,7 @@ public class MobsCommand extends CommandBase
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
 		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /drops command.");
+			sender.sendChatToPlayer("\u00a74You do not have permission to use the /mobs command.");
 			return;
 		}
 		
@@ -45,7 +50,7 @@ public class MobsCommand extends CommandBase
 					if(s.loadedEntityList.get(id) instanceof EntityCreature) amt++;
 				}
 				String prefix = (s.getWorldInfo().equals(player.worldObj.getWorldInfo())) ? "\u00a72" :  "" ;
-				if (amt > 0) sender.sendChatToPlayer(prefix + amt + " creatures spawned in world "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+				if (amt > 0) sender.sendChatToPlayer(prefix + amt + " creatures spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
 				total += amt;
 			}
 
@@ -61,7 +66,7 @@ public class MobsCommand extends CommandBase
 					else if(s.loadedEntityList.get(id) instanceof INpc) amtNPC++;
 				}
 				String prefix = (s.getWorldInfo().equals(player.worldObj.getWorldInfo())) ? "\u00a72" :  "" ;
-				if ((amtHos + amtPas + amtNPC) > 0) sender.sendChatToPlayer(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in world "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+				if ((amtHos + amtPas + amtNPC) > 0) sender.sendChatToPlayer(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
 				total += (amtHos + amtPas + amtNPC);
 			}
 			
