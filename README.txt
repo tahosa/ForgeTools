@@ -1,4 +1,4 @@
-README.md
+README.txt
 
 ForgeTools is a mod for Minecraft Forge based servers which gives server 
 administrators access to information about the server from in-game such as
