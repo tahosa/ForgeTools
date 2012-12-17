@@ -34,6 +34,7 @@ public class ForgeTools
 		manager.registerCommand(new DropsCommand());
 		manager.registerCommand(new LoadedChunksCommand());
 		manager.registerCommand(new DimIDCommand());
-		System.out.println("ForgeTools: Registered 4 commands");
+		manager.registerCommand(new MobsCommand());
+		System.out.println("ForgeTools: Registered 5 commands");
 	}
 }
