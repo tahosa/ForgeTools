@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.CommandBase;
 import net.minecraft.src.EntityAnimal;
 import net.minecraft.src.EntityCreature;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMob;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IAnimals;
@@ -11,6 +12,7 @@ import net.minecraft.src.ICommandSender;
 import net.minecraft.src.INpc;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.WorldServer;
+import net.minecraft.src.WrongUsageException;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class MobsCommand extends CommandBase
@@ -38,57 +40,40 @@ public class MobsCommand extends CommandBase
 		}
 		
 		MinecraftServer server = ForgeTools.server;
-		int total = 0;
+		int amtHos = 0, amtPas = 0, amtNPC = 0;
+		boolean details = false, totalArg = false;
 		
+		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
+		else if (args.length == 1)
+		{
+			if(args[0].equals("detail"))
+				details = true;
+			else if (args[0].equals("total"))
+				totalArg = true;
+			else throw new WrongUsageException(getCommandUsage(sender));
+		}		
 		
-		if (args.length == 0) {		// No arguments show general stats about loaded mobs
-			for(WorldServer s : server.worldServers)
+		for(WorldServer s : server.worldServers)
+		{
+			amtHos = 0;
+			amtPas = 0;
+			amtNPC = 0;
+			boolean playerInWorld = s.getWorldInfo().equals(player.worldObj.getWorldInfo());
+			int amt = 0;
+			for(int id=0; id < s.loadedEntityList.size(); id++)
 			{
-				int amt = 0;
-				for(int id=0; id < s.loadedEntityList.size(); id++)
-				{
-					if(s.loadedEntityList.get(id) instanceof EntityCreature) amt++;
-				}
-				String prefix = (s.getWorldInfo().equals(player.worldObj.getWorldInfo())) ? "\u00a72" :  "" ;
-				if (amt > 0) sender.sendChatToPlayer(prefix + amt + " creatures spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
-				total += amt;
+				
+				if(s.loadedEntityList.get(id) instanceof EntityMob) amtHos++;
+				else if((s.loadedEntityList.get(id) instanceof IAnimals) && !(s.loadedEntityList.get(id) instanceof INpc)) amtPas++;
+				else if(s.loadedEntityList.get(id) instanceof INpc) amtNPC++;				
 			}
-
-			if (total == 0) sender.sendChatToPlayer("No creatures spawned in any world");
-		} else if (args[0].equals("detail")) {		// Show a breakdown of the types of loaded mobs
-			for(WorldServer s : server.worldServers)
-			{
-				int amtHos = 0, amtPas = 0, amtNPC = 0;
-				for(int id=0; id < s.loadedEntityList.size(); id++)
-				{
-					if(s.loadedEntityList.get(id) instanceof EntityMob) amtHos++;
-					else if((s.loadedEntityList.get(id) instanceof IAnimals) && !(s.loadedEntityList.get(id) instanceof INpc)) amtPas++;
-					else if(s.loadedEntityList.get(id) instanceof INpc) amtNPC++;
-				}
-				String prefix = (s.getWorldInfo().equals(player.worldObj.getWorldInfo())) ? "\u00a72" :  "" ;
-				if ((amtHos + amtPas + amtNPC) > 0) sender.sendChatToPlayer(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
-				total += (amtHos + amtPas + amtNPC);
-			}
-			
-			if (total == 0) sender.sendChatToPlayer("No creatures spawned in any world");
-		} else if (args[0].equals("total")) {		// Show a breakdown of the types of loaded mobs
-			int amtHos = 0, amtPas = 0, amtNPC = 0;
-			for(WorldServer s : server.worldServers)
-			{
-				for(int id=0; id < s.loadedEntityList.size(); id++)
-				{
-					if(s.loadedEntityList.get(id) instanceof EntityMob) amtHos++;
-					else if((s.loadedEntityList.get(id) instanceof IAnimals) && !(s.loadedEntityList.get(id) instanceof INpc)) amtPas++;
-					else if(s.loadedEntityList.get(id) instanceof INpc) amtNPC++;
-				}				
-			}
-			if ((amtHos + amtPas + amtNPC) > 0) sender.sendChatToPlayer(amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned across all worlds");
-			total += (amtHos + amtPas + amtNPC);
-			
-			if (total == 0) sender.sendChatToPlayer("No creatures spawned in any world");
-		} else {		// Unknown argument display message
-			String prefix = "\u00a7c";
-			sender.sendChatToPlayer(prefix + "Unrecongized argument " + args[0]);
+			String prefix = (playerInWorld) ? "\u00a72" :  "" ;
+			if (!details && !totalArg && (amtHos + amtPas + amtNPC) > 0)
+				sender.sendChatToPlayer(prefix + (amtHos + amtPas + amtNPC) + " creatures spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+			else if (details && (amtHos + amtPas + amtNPC) > 0)
+				sender.sendChatToPlayer(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
 		}
+		if (totalArg)
+			sender.sendChatToPlayer(amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned across all worlds");
 	}
 }
