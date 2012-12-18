@@ -22,7 +22,7 @@ public class SmiteCommand extends CommandBase{
 	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/smite playername";
+    	return "/smite [username]";
     }
 
 	@Override
