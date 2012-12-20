@@ -22,7 +22,7 @@ public class HealCommand extends CommandBase{
 	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/heal [hp | hunger] [amount] [username]";
+    	return "/heal [hp | hunger | username] [amount] [username]";
     }
 
 	@Override
@@ -82,7 +82,7 @@ public class HealCommand extends CommandBase{
 			if (full) {
 				sender.sendChatToPlayer("\u00a7aHealing " + user + "'s HP and hunger to full");
 				target.heal(20);
-				target.getFoodStats().addStats(20, 0);
+				target.getFoodStats().addStats(20, 20);
 				target.sendChatToPlayer("\u00a7a" + player.username + " has healed your HP and hunger to full");
 			} else {
 				sender.sendChatToPlayer("\u00a7aHealing " + user + "'s " + ((hp == true) ? "hp" : "hunger") + " by " + amt / 2);
@@ -91,7 +91,7 @@ public class HealCommand extends CommandBase{
 					
 					target.sendChatToPlayer("\u00a7a" + player.username + " has healed your HP by " + amt / 2 + " hearts");
 				} else {
-					target.getFoodStats().addStats(amt, 0);
+					target.getFoodStats().addStats(amt, 20);
 					
 					target.sendChatToPlayer("\u00a7a" + player.username + " has healed your hunger by " + amt / 2 + " drumsticks");
 				}
