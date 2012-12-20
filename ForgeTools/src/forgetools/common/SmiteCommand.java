@@ -22,7 +22,7 @@ public class SmiteCommand extends CommandBase{
 	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/smite [username]";
+    	return "/smite [username] [announce]";
     }
 
 	@Override
@@ -39,7 +39,16 @@ public class SmiteCommand extends CommandBase{
 			return;
 		}
 		
-		if (args.length != 1) throw new WrongUsageException(getCommandUsage(sender));	// Only accept the command with one argument
+		boolean announce = false;
+		
+		// Only accept the command with one or two arguments
+		if (args.length == 2) {
+			if (args[1].equals("announce"))
+				announce = true;
+			else 
+				throw new WrongUsageException(getCommandUsage(sender));
+		} else if (args.length != 1)
+			throw new WrongUsageException(getCommandUsage(sender));
 		
 		String players[] = serverConfig.getAllUsernames();	// Get an array of all usernames
 		boolean found = false;
@@ -66,6 +75,19 @@ public class SmiteCommand extends CommandBase{
 			targetWorld.spawnEntityInWorld(bolt);
 			
 			target.setEntityHealth(0);	// Set the target's health to 0
+			
+			// Announce the death
+			if (announce) {
+				for (String s: players) {
+					EntityPlayerMP temp = serverConfig.getPlayerForUsername(args[0]);
+					temp.sendChatToPlayer(target.username + " has been smited by " + player.username);
+				}
+			} else {
+				for (String s: players) {
+					EntityPlayerMP temp = serverConfig.getPlayerForUsername(args[0]);
+					temp.sendChatToPlayer(target.username + " has died");
+				}
+			}
 		} else
 			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
 	}

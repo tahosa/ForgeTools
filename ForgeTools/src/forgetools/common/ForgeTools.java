@@ -36,6 +36,7 @@ public class ForgeTools
 		manager.registerCommand(new DimIDCommand());
 		manager.registerCommand(new MobsCommand());
 		manager.registerCommand(new SmiteCommand());
-		System.out.println("ForgeTools: Registered 6 commands");
+		manager.registerCommand(new HealCommand());
+		System.out.println("ForgeTools: Registered 7 commands");
 	}
 }
