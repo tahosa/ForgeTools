@@ -65,7 +65,7 @@ public class SmiteCommand extends CommandBase{
 			EntityLightningBolt bolt = new EntityLightningBolt(targetWorld, target.posX, target.posY, target.posZ);
 			targetWorld.spawnEntityInWorld(bolt);
 			
-			target.heal(-20);	// Remove 20 half-hearts from the player, this kills the player regardless of armor
+			target.setEntityHealth(0);	// Set the target's health to 0
 		} else
 			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
 	}
