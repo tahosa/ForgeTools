@@ -1,13 +1,13 @@
 package forgetools.common;
 
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.ICommandSender;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.WorldServer;
-import net.minecraft.src.WrongUsageException;
+import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class DropsCommand extends CommandBase

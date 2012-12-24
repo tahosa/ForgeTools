@@ -1,8 +1,7 @@
 package forgetools.common;
 
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ServerCommandManager;
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;

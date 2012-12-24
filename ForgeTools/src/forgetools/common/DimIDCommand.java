@@ -1,9 +1,9 @@
 package forgetools.common;
 
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.ICommandSender;
 
 public class DimIDCommand extends CommandBase
 {

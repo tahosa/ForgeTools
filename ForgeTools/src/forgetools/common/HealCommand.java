@@ -1,16 +1,13 @@
 package forgetools.common;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.EntityChicken;
-import net.minecraft.src.EntityLightningBolt;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.ICommandSender;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.ServerConfigurationManager;
-import net.minecraft.src.WorldServer;
-import net.minecraft.src.WrongUsageException;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class HealCommand extends CommandBase{
 

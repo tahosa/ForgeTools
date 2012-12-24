@@ -1,18 +1,15 @@
 package forgetools.common;
 
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.INpc;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.CommandBase;
-import net.minecraft.src.EntityAnimal;
-import net.minecraft.src.EntityCreature;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityMob;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.IAnimals;
-import net.minecraft.src.ICommandSender;
-import net.minecraft.src.INpc;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.WorldServer;
-import net.minecraft.src.WrongUsageException;
+import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class MobsCommand extends CommandBase
