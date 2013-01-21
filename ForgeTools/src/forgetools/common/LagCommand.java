@@ -46,7 +46,7 @@ public class LagCommand extends CommandBase
 			double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer("Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+			sender.sendChatToPlayer(textColor(tps) + "Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
 		}
 		else if (details)
 		{
@@ -65,7 +65,7 @@ public class LagCommand extends CommandBase
 				double tickMS = Math.round(avgTick(worldTickTimes.get(i))*1.0E-5D)/10d;
 				double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 				double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-				sender.sendChatToPlayer(dimName + " Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+				sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
 			}
 		}
 		else
@@ -76,7 +76,7 @@ public class LagCommand extends CommandBase
 			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer(dimName + " Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+			sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
 		}
 		
 	}
@@ -99,5 +99,15 @@ public class LagCommand extends CommandBase
 			sum += svTicks[i];
 		
 		return (double)sum / (double) size;
+	}
+	
+	private String textColor(double tps)
+	{
+		if (tps >= 15)
+			return "\u00a72";
+		else if(tps >= 10 && tps < 15)
+			return "\u00a7e";
+		else 
+			return "\u00a74";
 	}
 }
