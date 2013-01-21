@@ -1,7 +1,10 @@
 package forgetools.common;
 
+import java.util.Hashtable;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
@@ -13,24 +16,77 @@ public class LagCommand extends CommandBase
 	{
 		return "lag";
 	}
+	
+	public String getCommandUsage(ICommandSender par1ICommandSender)
+	{
+		return "/lag [detail | d | overview | o]";
+	}
 
-	@Override
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
+		
+		boolean details = false, overview = false;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+		
+		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
+		else if (args.length == 1)
 		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /lag command.");
-			return;
-		}		
+			if(args[0].equals("detail") || args[0].equals("d"))
+				details = true;
+			else if (args[0].equals("overview") || args[0].equals("o"))
+				overview = true;
+			else throw new WrongUsageException(getCommandUsage(sender));
+		}
 		
 		MinecraftServer server = ForgeTools.server;
-		double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
-		double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 100);
-		double tps = (tickMS < 50) ? 20d : Math.round(1000d/tickMS * 10d)/10d;
-		sender.sendChatToPlayer("Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
 		
+		if(overview)
+		{
+			double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
+			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
+			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
+			sender.sendChatToPlayer("Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+		}
+		else if (details)
+		{
+			Hashtable<Integer,long[]> worldTickTimes = server.worldTickTimes;
+			for(Integer i : worldTickTimes.keySet())
+			{
+				String dimName = i.toString();
+				try 
+				{
+					dimName = server.worldServerForDimension(i).provider.getDimensionName();
+				} catch (Exception ex)
+				{
+					System.out.println(ex.getMessage());
+				}
+				
+				double tickMS = Math.round(avgTick(worldTickTimes.get(i))*1.0E-5D)/10d;
+				double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
+				double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
+				sender.sendChatToPlayer(dimName + " Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+			}
+		}
+		else
+		{
+			int dimension = player.worldObj.getWorldInfo().getDimension();
+			String dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
+			long[] tickTimes = server.worldTickTimes.get(dimension);
+			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
+			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
+			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
+			sender.sendChatToPlayer(dimName + " Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+		}
+		
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
 	}
 	
 	private double avgTick(long[] serverTickArray)

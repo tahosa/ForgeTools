@@ -12,8 +12,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class DropsCommand extends CommandBase
 {
-
-	@Override
 	public String getCommandName()
 	{
 		return "drops";
@@ -21,29 +19,23 @@ public class DropsCommand extends CommandBase
 
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/drops [detail | kill | killall]";
+    	return "/drops [detail | d | kill | killall]";
     }
 	
-	@Override
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /drops command.");
-			return;
-		}
-		
+				
 		MinecraftServer server = ForgeTools.server;
 		boolean details = false,  kill = false, killall = false;
 		
 		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
 		{
-			if(args[0].equals("detail"))
+			if(args[0].equals("detail") || args[0].equals("d"))
 				details = true;
-			else if (args[0].equals("kill"))
+			else if (args[0].equals("kill") || args[0].equals("k"))
 				kill = true;
 			else if (args[0].equals("killall"))
 				killall = true;
@@ -78,5 +70,13 @@ public class DropsCommand extends CommandBase
 		
 		if (killall) sender.sendChatToPlayer(total + " items were removed from all worlds");
 		if (!(details || kill || killall)) sender.sendChatToPlayer(total + " loose items in all worlds");
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
 	}
 }

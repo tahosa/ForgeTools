@@ -11,30 +11,21 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class HealCommand extends CommandBase{
 
-	@Override
 	public String getCommandName() {
 		return "heal";
 	}
 	
-	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
     	return "/heal [username] [hp | hunger] [amount]";
     }
 
-	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		ServerConfigurationManager serverConfig = ModLoader.getMinecraftServerInstance().getConfigurationManager();
 		MinecraftServer server = ForgeTools.server;
-		
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !serverConfig.getOps().contains(player.username.trim().toLowerCase()))
-		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /heal command.");
-			return;
-		}
 		
 		boolean full = false, hp = false, food = false;
 		int amt = 20;
@@ -109,5 +100,14 @@ public class HealCommand extends CommandBase{
 		} else
 			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found.");
 	}
+
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
+	}
+	
 
 }

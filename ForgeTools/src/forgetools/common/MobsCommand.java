@@ -14,7 +14,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 public class MobsCommand extends CommandBase
 {
-	@Override
 	public String getCommandName()
 	{
 		return "mobs";
@@ -25,17 +24,11 @@ public class MobsCommand extends CommandBase
     	return "/mobs [detail | total]";
     }
 
-	@Override
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /mobs command.");
-			return;
-		}
-		
+				
 		MinecraftServer server = ForgeTools.server;
 		int amtHos = 0, amtPas = 0, amtNPC = 0;
 		boolean details = false, totalArg = false;
@@ -43,9 +36,9 @@ public class MobsCommand extends CommandBase
 		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
 		{
-			if(args[0].equals("detail"))
+			if(args[0].equals("detail") || args[0].equals("d"))
 				details = true;
-			else if (args[0].equals("total"))
+			else if (args[0].equals("total") || args[0].equals("t"))
 				totalArg = true;
 			else throw new WrongUsageException(getCommandUsage(sender));
 		}		
@@ -72,5 +65,13 @@ public class MobsCommand extends CommandBase
 		}
 		if (totalArg)
 			sender.sendChatToPlayer(amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned across all worlds");
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
 	}
 }

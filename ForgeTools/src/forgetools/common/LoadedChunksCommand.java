@@ -5,13 +5,13 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class LoadedChunksCommand extends CommandBase
 {
 
-	@Override
 	public String getCommandName()
 	{
 		return "loadedchunks";
@@ -19,10 +19,9 @@ public class LoadedChunksCommand extends CommandBase
 
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/loadedchunks [detail]";
+    	return "/loadedchunks [detail | d]";
     }
 	
-	@Override
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
@@ -33,7 +32,7 @@ public class LoadedChunksCommand extends CommandBase
 		
 		if(args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
-			if (args[0].equals("detail")) details = true;
+			if (args[0].equals("detail") || args[0].equals("d")) details = true;
 		else throw new WrongUsageException(getCommandUsage(sender));
 		
 		int total = 0;
@@ -47,6 +46,14 @@ public class LoadedChunksCommand extends CommandBase
 		
 		if(!details) sender.sendChatToPlayer(total + " force loaded chunks in all worlds");
 		
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
 	}
 
 }

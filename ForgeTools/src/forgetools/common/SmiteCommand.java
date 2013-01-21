@@ -11,20 +11,19 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class SmiteCommand extends CommandBase{
+public class SmiteCommand extends CommandBase
+{
 
-	@Override
-	public String getCommandName() {
+	public String getCommandName()
+	{
 		return "smite";
 	}
 	
-	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
     	return "/smite [username] [announce]";
     }
 
-	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
@@ -32,12 +31,7 @@ public class SmiteCommand extends CommandBase{
 		MinecraftServer server = ForgeTools.server;
 		
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !serverConfig.getOps().contains(player.username.trim().toLowerCase()))
-		{
-			sender.sendChatToPlayer("\u00a74You do not have permission to use the /smite command.");
-			return;
-		}
-		
+				
 		boolean announce = false;
 		
 		// Only accept the command with one or two arguments
@@ -89,6 +83,14 @@ public class SmiteCommand extends CommandBase{
 			}
 		} else
 			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender sender)
+	{
+		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
+			return false;
+		return true;
 	}
 
 }
