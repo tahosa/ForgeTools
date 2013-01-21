@@ -84,9 +84,11 @@ public class LagCommand extends CommandBase
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-			return false;
-		return true;
+		if (player.username.equalsIgnoreCase("Server") 
+				|| ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()) 
+				|| ForgeTools.advancedUsers.contains(player.username.trim().toLowerCase()))
+			return true;
+		return false;
 	}
 	
 	private double avgTick(long[] serverTickArray)
