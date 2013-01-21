@@ -19,7 +19,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 
-@Mod(modid="ForgeTools_0_3a", name="Forge Tools", version="0.3a")
+@Mod(modid="ForgeTools_0_4a", name="Forge Tools", version="0.4a")
 @NetworkMod(clientSideRequired=false, serverSideRequired=false)
 
 public class ForgeTools
