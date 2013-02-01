@@ -1,5 +1,8 @@
 package forgetools.common;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -21,6 +24,11 @@ public class LoadedChunksCommand extends CommandBase
     {
     	return "/loadedchunks [detail | d]";
     }
+	
+	public List getCommandAliases()
+	{
+		return Arrays.asList(new String[] {"lc"});
+	}
 	
 	public void processCommand(ICommandSender sender, String[] args)
 	{
