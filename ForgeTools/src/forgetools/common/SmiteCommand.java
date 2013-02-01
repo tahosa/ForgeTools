@@ -72,13 +72,13 @@ public class SmiteCommand extends CommandBase
 			// Announce the death
 			if (announce) {
 				for (String s: players) {
-					EntityPlayerMP temp = serverConfig.getPlayerForUsername(args[0]);
+					EntityPlayerMP temp = serverConfig.getPlayerForUsername(s);
 					temp.sendChatToPlayer(target.username + " has been smited by " + player.username);
 				}
 			} else {
 				for (String s: players) {
-					EntityPlayerMP temp = serverConfig.getPlayerForUsername(args[0]);
-					temp.sendChatToPlayer(target.username + " has died");
+					EntityPlayerMP temp = serverConfig.getPlayerForUsername(s);
+					temp.sendChatToPlayer(target.username + " died");
 				}
 			}
 		} else

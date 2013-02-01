@@ -54,7 +54,8 @@ public class ForgeTools
 		manager.registerCommand(new SmiteCommand());
 		manager.registerCommand(new HealCommand());
 		manager.registerCommand(new ForgeToolsCommand());
-		System.out.println("ForgeTools: Registered 8 commands");
+		manager.registerCommand(new InventoryCommand());
+		System.out.println("ForgeTools: Registered 9 commands");
 		System.out.println("ForgeTools: Registered " + advancedUsers.size() + " advanced users");
 	}
 	
