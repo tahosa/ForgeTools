@@ -9,11 +9,11 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.src.ModLoader;
 
-public class ForgeToolsCommand extends CommandBase {
+public class ForgeToolsCommand extends ForgeToolsGenericCommand {
 	
-	public String getCommandName()
+	public ForgeToolsCommand(String cmds)
 	{
-		return "forgetools";
+		super(cmds);
 	}
 	
 	public String getCommandUsage(ICommandSender sender)
@@ -60,18 +60,10 @@ public class ForgeToolsCommand extends CommandBase {
 		
 		ForgeTools.saveConfigUpdates();
 	}
-	
-	public List getCommandAliases()
-	{
-		return Arrays.asList(new String[] {"ft"});
-	}
-	
+
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-			return false;
-		return true;
+		return hasOpPermissions(sender);
 	}
 
 }

@@ -1,6 +1,9 @@
 package forgetools.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -10,16 +13,16 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class LagCommand extends CommandBase
-{
-	public String getCommandName()
+public class LagCommand extends ForgeToolsGenericCommand
+{	
+	public LagCommand(String cmds)
 	{
-		return "lag";
+		super(cmds);
 	}
 	
 	public String getCommandUsage(ICommandSender par1ICommandSender)
 	{
-		return "/lag [detail | d | overview | o]";
+		return "/" + cmdName + " [detail | d | overview | o]";
 	}
 
 	public void processCommand(ICommandSender sender, String[] args)
@@ -57,7 +60,8 @@ public class LagCommand extends CommandBase
 				try 
 				{
 					dimName = server.worldServerForDimension(i).provider.getDimensionName();
-				} catch (Exception ex)
+				} 
+				catch (Exception ex)
 				{
 					System.out.println(ex.getMessage());
 				}
@@ -83,12 +87,7 @@ public class LagCommand extends CommandBase
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (player.username.equalsIgnoreCase("Server") 
-				|| ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()) 
-				|| ForgeTools.advancedUsers.contains(player.username.trim().toLowerCase()))
-			return true;
-		return false;
+		return hasEnhancedPermissions(sender);
 	}
 	
 	private double avgTick(long[] serverTickArray)

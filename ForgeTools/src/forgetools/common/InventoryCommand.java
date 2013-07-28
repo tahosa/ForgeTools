@@ -1,7 +1,8 @@
 package forgetools.common;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.command.CommandBase;
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,20 +11,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.src.ModLoader;
+import cpw.mods.fml.common.FMLCommonHandler;
 
-public class InventoryCommand extends CommandBase {
+public class InventoryCommand extends ForgeToolsGenericCommand
+{
 
-	public String getCommandName() {
-
-		return "inventory";
+	public InventoryCommand(String cmds)
+	{
+		super(cmds);
 	}
 	
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/inventory [username] [dropall/list/find] [item]";
+    	return "/" + cmdName + " <username> <dropall|list|find> [item]";
     }
 
-	public void processCommand(ICommandSender sender, String[] args) {
+	public void processCommand(ICommandSender sender, String[] args)
+	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
 		ServerConfigurationManager serverConfig = ModLoader.getMinecraftServerInstance().getConfigurationManager();
@@ -44,17 +48,19 @@ public class InventoryCommand extends CommandBase {
 		
 		String players[] = serverConfig.getAllUsernames();	// Get an array of all usernames
 		boolean found = false;
-		for (String s: players) {							// Search for the targeted username
-			if (s.equals(args[0]))
+		for (String s : players) 
+		{							// Search for the targeted username
+			if (s.toLowerCase().equals(args[0].toLowerCase()))
 				 found = true;
 		}
 		
-		if (found) {
+		if (found) 
+		{
 			EntityPlayerMP target = serverConfig.getPlayerForUsername(args[0]);
-			if (drop) {
+			if (drop) 
+			{
 				// No better way to do this
-				int temp;
-		        for (temp = 0; temp < target.inventory.mainInventory.length; ++temp)
+		        for (int temp = 0; temp < target.inventory.mainInventory.length; ++temp)
 		        {
 		            if (target.inventory.mainInventory[temp] != null)
 		            {
@@ -63,7 +69,7 @@ public class InventoryCommand extends CommandBase {
 		            }
 		        }
 
-		        for (temp = 0; temp < target.inventory.armorInventory.length; ++temp)
+		        for (int temp = 0; temp < target.inventory.armorInventory.length; ++temp)
 		        {
 		            if (target.inventory.armorInventory[temp] != null)
 		            {
@@ -74,10 +80,11 @@ public class InventoryCommand extends CommandBase {
 				
 				sender.sendChatToPlayer("\u00a77Dropping " + args[0] + "'s items");
 			} else if (list) {
-				int temp = 0;
-				for (temp = 0; temp < target.inventory.getSizeInventory(); temp++) {
+				for (int temp = 0; temp < target.inventory.getSizeInventory(); temp++)
+				{
 					ItemStack tempItem = target.inventory.getStackInSlot(temp);
-						if (tempItem != null) {
+						if (tempItem != null)
+						{
 							String tempString = Item.itemsList[tempItem.getItem().itemID].getLocalItemName(tempItem);
 							sender.sendChatToPlayer(args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));
 						}
@@ -85,12 +92,15 @@ public class InventoryCommand extends CommandBase {
 			} else if (find) {
 				int temp = 0;
 				boolean itemFound = false;
-				for (temp = 0; temp < target.inventory.getSizeInventory(); temp++) {
-					String searchTerm = args[2].toLowerCase();
+				for (temp = 0; temp < target.inventory.getSizeInventory(); temp++)
+				{
+					String searchTerm = parseSearchString(args[2].toLowerCase());
 					ItemStack tempItem = target.inventory.getStackInSlot(temp);
-					if (tempItem != null) {
+					if (tempItem != null)
+					{
 						String tempString = Item.itemsList[tempItem.getItem().itemID].getLocalItemName(tempItem);
-						if (tempString.toLowerCase().contains(searchTerm)) {
+						if (searchString(searchTerm, tempString.toLowerCase()))
+						{
 							sender.sendChatToPlayer("\u00a7c" + args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));
 							itemFound = true;
 						}
@@ -105,17 +115,35 @@ public class InventoryCommand extends CommandBase {
 			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
 	}
 	
-	String parseName (String s) {
+	String parseName (String s)
+	{
 		String tokens[] = s.split("\\.");
 		
 		return tokens[1];
 	}
 	
+	String parseSearchString(String s)
+	{
+		if (ForgeTools.regexMatch)
+		{
+			//s.replaceAll("\\", "\\\\");
+		}
+		else
+		{
+			s.replaceAll("\\*", ".*");
+			s.replaceAll("\\?", ".");
+			//s.replaceAll("\\", "\\\\");
+		}
+		return s;
+	}
+	
+	boolean searchString(String searchTerm, String target)
+	{
+		return target.matches(searchTerm);
+	}
+	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-			return false;
-		return true;
+		return hasOpPermissions(sender);
 	}
 }

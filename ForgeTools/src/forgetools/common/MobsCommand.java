@@ -1,5 +1,8 @@
 package forgetools.common;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -12,16 +15,16 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class MobsCommand extends CommandBase
+public class MobsCommand extends ForgeToolsGenericCommand
 {
-	public String getCommandName()
+	public MobsCommand(String cmds)
 	{
-		return "mobs";
+		super(cmds);
 	}
-	
+
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/mobs [detail | total]";
+    	return "/" + cmdName + " [detail | total]";
     }
 
 	public void processCommand(ICommandSender sender, String[] args)
@@ -69,11 +72,6 @@ public class MobsCommand extends CommandBase
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (player.username.equalsIgnoreCase("Server") 
-				|| ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()) 
-				|| ForgeTools.advancedUsers.contains(player.username.trim().toLowerCase()))
-			return true;
-		return false;
+		return hasEnhancedPermissions(sender);
 	}
 }

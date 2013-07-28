@@ -1,17 +1,20 @@
 package forgetools.common;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class DimIDCommand extends CommandBase
+public class DimIDCommand extends ForgeToolsGenericCommand
 {
-	public String getCommandName()
+	public DimIDCommand(String cmds)
 	{
-		return "dimid";
+		super(cmds);
 	}
-
+	
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;

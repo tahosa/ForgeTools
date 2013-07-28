@@ -12,23 +12,18 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class LoadedChunksCommand extends CommandBase
+public class LoadedChunksCommand extends ForgeToolsGenericCommand
 {
 
-	public String getCommandName()
+	public LoadedChunksCommand(String cmds)
 	{
-		return "loadedchunks";
+		super(cmds);
 	}
 
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/loadedchunks [detail | d]";
+    	return  "/" + cmdName + " [detail | d]";
     }
-	
-	public List getCommandAliases()
-	{
-		return Arrays.asList(new String[] {"lc"});
-	}
 	
 	public void processCommand(ICommandSender sender, String[] args)
 	{
@@ -58,12 +53,7 @@ public class LoadedChunksCommand extends CommandBase
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
 	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (player.username.equalsIgnoreCase("Server") 
-				|| ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()) 
-				|| ForgeTools.advancedUsers.contains(player.username.trim().toLowerCase()))
-			return true;
-		return false;
+		return hasEnhancedPermissions(sender);
 	}
 
 }
