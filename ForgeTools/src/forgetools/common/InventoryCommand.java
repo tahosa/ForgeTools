@@ -85,7 +85,7 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 					ItemStack tempItem = target.inventory.getStackInSlot(temp);
 						if (tempItem != null)
 						{
-							String tempString = Item.itemsList[tempItem.getItem().itemID].getLocalItemName(tempItem);
+							String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
 							sender.sendChatToPlayer(args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));
 						}
 				}
@@ -98,7 +98,7 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 					ItemStack tempItem = target.inventory.getStackInSlot(temp);
 					if (tempItem != null)
 					{
-						String tempString = Item.itemsList[tempItem.getItem().itemID].getLocalItemName(tempItem);
+						String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
 						if (searchString(searchTerm, tempString.toLowerCase()))
 						{
 							sender.sendChatToPlayer("\u00a7c" + args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));

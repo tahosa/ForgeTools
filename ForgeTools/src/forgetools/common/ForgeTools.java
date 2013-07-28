@@ -90,7 +90,7 @@ public class ForgeTools
 	{
 		config.load();
 		
-		String advUsersRaw = config.get(config.CATEGORY_GENERAL, "advancedUsers", "").value;
+		String advUsersRaw = config.get(config.CATEGORY_GENERAL, "advancedUsers", "").getString();
 		advancedUsers = new ArrayList<String>();
 		advancedUsers.addAll(Arrays.asList(advUsersRaw.split(",\\s*")));
 		
@@ -115,8 +115,8 @@ public class ForgeTools
 		
 		for(Property cmd : cmdData)
 		{
-			if(cmd.wasRead() && !cmd.value.isEmpty())
-				commandsToLoad.put(cmd.getName(), cmd.value);
+			if(cmd.wasRead() && !cmd.getString().isEmpty())
+				commandsToLoad.put(cmd.getName(), cmd.getString());
 		}
 		
 		config.save();
@@ -130,7 +130,7 @@ public class ForgeTools
 			users += s +", ";
 		}
 		users = users.substring(0, users.length()-2);
-		config.get(config.CATEGORY_GENERAL, "advancedUsers", "").value = users;
+		config.get(config.CATEGORY_GENERAL, "advancedUsers",  "").set(users);
 		config.save();
 	}
 }
