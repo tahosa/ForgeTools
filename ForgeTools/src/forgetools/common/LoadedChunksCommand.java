@@ -35,7 +35,7 @@ public class LoadedChunksCommand extends ForgeToolsGenericCommand
 		
 		if(args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
-			if (args[0].equals("detail") || args[0].equals("d")) details = true;
+			if (args[0].equalsIgnoreCase("detail") || args[0].equalsIgnoreCase("d")) details = true;
 		else throw new WrongUsageException(getCommandUsage(sender));
 		
 		int total = 0;

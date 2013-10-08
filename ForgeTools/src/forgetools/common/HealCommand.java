@@ -41,12 +41,12 @@ public class HealCommand extends ForgeToolsGenericCommand
 			full = true;
 		else if (args.length == 2)
 		{ 
-			if (args[1].equals("hp")) 
+			if (args[1].equalsIgnoreCase("hp")) 
 			{
 				hp = true;
 				full = true;
 			}
-			else if (args[1].equals("hunger")) 
+			else if (args[1].equalsIgnoreCase("hunger")) 
 			{
 				food = true;
 				full = true;
@@ -56,9 +56,9 @@ public class HealCommand extends ForgeToolsGenericCommand
 		}
 		else if (args.length == 3)
 		{
-			if (args[1].equals("hp"))
+			if (args[1].equalsIgnoreCase("hp"))
 				hp = true;
-			else if (args[1].equals("hunger"))
+			else if (args[1].equalsIgnoreCase("hunger"))
 				food = true;
 			else
 				throw new WrongUsageException(getCommandUsage(sender));

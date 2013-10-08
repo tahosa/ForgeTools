@@ -41,7 +41,7 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 		// Only accept the command with one or two arguments
 		if (args.length == 2)
 		{
-			if (args[1].equals("announce"))
+			if (args[1].equalsIgnoreCase("announce"))
 				announce = true;
 			else 
 				throw new WrongUsageException(getCommandUsage(sender));

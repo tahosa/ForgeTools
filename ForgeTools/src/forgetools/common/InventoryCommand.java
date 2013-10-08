@@ -37,11 +37,11 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 				
 		boolean drop = false, list = false, find = false;
 		
-		if (args.length == 2 && args[1].equals("dropall"))
+		if (args.length == 2 && args[1].equalsIgnoreCase("dropall"))
 			drop = true;
-		else if (args.length == 2 && args[1].equals("list"))
+		else if (args.length == 2 && args[1].equalsIgnoreCase("list"))
 			list = true;
-		else if (args.length == 3 && args[1].equals("find"))
+		else if (args.length == 3 && args[1].equalsIgnoreCase("find"))
 			find = true;
 		else 
 			throw new WrongUsageException(getCommandUsage(sender));			
@@ -49,7 +49,8 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 		String players[] = serverConfig.getAllUsernames();	// Get an array of all usernames
 		boolean found = false;
 		for (String s : players) 
-		{							// Search for the targeted username
+		{
+			// Search for the targeted username
 			if (s.toLowerCase().equals(args[0].toLowerCase()))
 				 found = true;
 		}

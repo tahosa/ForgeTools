@@ -22,34 +22,37 @@ public class LagCommand extends ForgeToolsGenericCommand
 	
 	public String getCommandUsage(ICommandSender par1ICommandSender)
 	{
-		return "/" + cmdName + " [detail | d | overview | o]";
+		return "/" + cmdName + " [detail | d | current | c]";
 	}
 
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
-		boolean details = false, overview = false;
+		boolean details = false, current = false;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		
 		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
 		{
-			if(args[0].equals("detail") || args[0].equals("d"))
+			if(args[0].equalsIgnoreCase("detail") || args[0].equalsIgnoreCase("d"))
 				details = true;
-			else if (args[0].equals("overview") || args[0].equals("o"))
-				overview = true;
+			else if (args[0].equalsIgnoreCase("current") || args[0].equalsIgnoreCase("c"))
+				current = true;
 			else throw new WrongUsageException(getCommandUsage(sender));
 		}
 		
 		MinecraftServer server = ForgeTools.server;
 		
-		if(overview)
+		if(current)
 		{
-			double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
+			int dimension = player.worldObj.getWorldInfo().getDimension();
+			String dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
+			long[] tickTimes = server.worldTickTimes.get(dimension);
+			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer(textColor(tps) + "Tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+			sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
 		}
 		else if (details)
 		{
@@ -69,18 +72,15 @@ public class LagCommand extends ForgeToolsGenericCommand
 				double tickMS = Math.round(avgTick(worldTickTimes.get(i))*1.0E-5D)/10d;
 				double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 				double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-				sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+				sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
 			}
 		}
 		else
 		{
-			int dimension = player.worldObj.getWorldInfo().getDimension();
-			String dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
-			long[] tickTimes = server.worldTickTimes.get(dimension);
-			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
+			double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tickMS + "ms ("+tps+" tps, "+ tickPct+"%)");
+			sender.sendChatToPlayer(textColor(tps) + "Tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
 		}
 		
 	}

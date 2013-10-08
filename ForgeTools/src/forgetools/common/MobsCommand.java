@@ -24,7 +24,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
-    	return "/" + cmdName + " [detail | total]";
+    	return "/" + cmdName + " [detail | total] [force]";
     }
 
 	public void processCommand(ICommandSender sender, String[] args)
@@ -34,17 +34,24 @@ public class MobsCommand extends ForgeToolsGenericCommand
 				
 		MinecraftServer server = ForgeTools.server;
 		int amtHos = 0, amtPas = 0, amtNPC = 0;
-		boolean details = false, totalArg = false;
+		boolean details = false, totalArg = false, force = false;
 		
-		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
-		else if (args.length == 1)
+		if (args.length > 2) throw new WrongUsageException(getCommandUsage(sender));
+		
+		if (args.length >= 1)
 		{
-			if(args[0].equals("detail") || args[0].equals("d"))
+			if(args[0].equalsIgnoreCase("detail") || args[0].equalsIgnoreCase("d"))
 				details = true;
-			else if (args[0].equals("total") || args[0].equals("t"))
+			else if (args[0].equalsIgnoreCase("total") || args[0].equalsIgnoreCase("t"))
 				totalArg = true;
 			else throw new WrongUsageException(getCommandUsage(sender));
-		}		
+		}
+		if(args.length == 2)
+		{
+			if(args[1].equalsIgnoreCase("force") || args[1].equalsIgnoreCase("f"))
+				force = true;
+			else throw new WrongUsageException(getCommandUsage(sender));
+		}
 		
 		for(WorldServer s : server.worldServers)
 		{
