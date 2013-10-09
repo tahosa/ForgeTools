@@ -24,62 +24,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
  *
  */
 public class DropsCommand extends ForgeToolsGenericCommand
-{
-	/**
-	 * Comparator for using built in sort() methods on ChunkRef objects
-	 */
-	protected class ItemChunkRefComparator implements Comparator<Object>
-	{
-		@Override
-		public int compare(Object o1, Object o2) {
-			if(!(o1 instanceof Comparable))
-				return 0;
-			return ((Comparable)o1).compareTo(o2);
-		}
-		
-	}
-	
-	/**
-	 * Wrapper for chunks to add a count of how many loose items there are
-	 */
-	protected class ItemChunkRef implements Comparable
-	{
-		private Chunk _chunk;
-		private int _val;
-		
-		public ItemChunkRef(Chunk c, int value)
-		{
-			_chunk = c;
-			_val = value;
-		}
-		
-		public Chunk getChunk()
-		{
-			return _chunk;
-		}
-		
-		public int getValue()
-		{
-			return _val;
-		}
-		
-		@Override
-		public int compareTo(Object o)
-		{
-			if(o instanceof ItemChunkRef)
-			{
-				ItemChunkRef c = (ItemChunkRef)o;
-				if (c.getValue() < this.getValue())
-					return -1;
-				else if(c.getValue() == this.getValue())
-					return 0;
-				else return 1;
-			}
-			
-			return 0;
-		}
-	}
-	
+{	
 	private Date lastCheck = new Date();	// Last time the chunk list was updated
 	private HashMap<Chunk, Integer> items = new HashMap<Chunk, Integer>(); 	// Chunk list
 	private int total;	// Total number of items in all worlds
@@ -99,7 +44,6 @@ public class DropsCommand extends ForgeToolsGenericCommand
 		// If we are on the server, return
 		// TODO: Add ability to run commands in limited scope from console
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
-	    String name = sender.getCommandSenderName();
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);	// Plaer object of player who sent command
 				
 		MinecraftServer server = ForgeTools.server;
@@ -165,16 +109,20 @@ public class DropsCommand extends ForgeToolsGenericCommand
 					Object t = s.loadedEntityList.get(id);
 					if(t instanceof EntityItem)
 					{
-						++worldItemCount;
 						EntityItem e = (EntityItem)t;
+						
+						Chunk c = s.getChunkFromBlockCoords((int)Math.round(e.posX), (int)Math.round(e.posZ));
+						if(!c.isChunkLoaded)
+							continue;
+						
+						++worldItemCount;
+						
 						if(playerInWorld && (killall  || (kill && e.getDistanceToEntity(player) <= radius)))
 						{
 							e.setDead();
 							++itemsDeleted;
 							continue;
 						}
-						
-						Chunk c = s.getChunkFromBlockCoords((int)Math.round(e.posX), (int)Math.round(e.posZ));
 						
 						if(items.get(c) == null)
 						{
@@ -202,7 +150,7 @@ public class DropsCommand extends ForgeToolsGenericCommand
 		{
 			// Send extra info if details are needed
 			sender.sendChatToPlayer("Top 5 chunks by loose item count:");
-			ItemChunkRef[] sortedList = getSortedChunkList(items);
+			ItemChunkRef[] sortedList = ItemChunkRef.getSortedChunkList(items);
 			for (int i = 0; i < sortedList.length && i < 5; ++i)
 			{
 				ItemChunkRef cr = sortedList[i];
@@ -214,24 +162,6 @@ public class DropsCommand extends ForgeToolsGenericCommand
 		}
 		
 		if (!(details || kill || killall)) sender.sendChatToPlayer(total + " loose items in all worlds");
-	}
-	
-	/**
-	 * Get the list of chunks sorted by descending item count
-	 * @param chunks Map of chunks and the number of tiems they contain
-	 * @return Sorted list
-	 */
-	public ItemChunkRef[] getSortedChunkList(HashMap<Chunk, Integer> chunks)
-	{
-		ArrayList<ItemChunkRef> list = new ArrayList<ItemChunkRef>(); 
-		for(Chunk c : chunks.keySet())
-		{
-			list.add(new ItemChunkRef(c, chunks.get(c)));
-		}
-		
-		ItemChunkRef[] ret = list.toArray(new ItemChunkRef[] {});
-		Arrays.sort(ret, new ItemChunkRefComparator());
-		return ret;
 	}
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)
