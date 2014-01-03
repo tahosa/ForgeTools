@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

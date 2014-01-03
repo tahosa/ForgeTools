@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,9 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.FMLCommonHandler;
+import forgetools.ForgeTools;
 
 public class LagCommand extends ForgeToolsGenericCommand
 {	
@@ -46,13 +48,13 @@ public class LagCommand extends ForgeToolsGenericCommand
 		
 		if(current)
 		{
-			int dimension = player.worldObj.getWorldInfo().getDimension();
+			int dimension = player.dimension;
 			String dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
 			long[] tickTimes = server.worldTickTimes.get(dimension);
 			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)"));
 		}
 		else if (details)
 		{
@@ -72,7 +74,7 @@ public class LagCommand extends ForgeToolsGenericCommand
 				double tickMS = Math.round(avgTick(worldTickTimes.get(i))*1.0E-5D)/10d;
 				double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 				double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-				sender.sendChatToPlayer(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)"));
 			}
 		}
 		else
@@ -80,7 +82,7 @@ public class LagCommand extends ForgeToolsGenericCommand
 			double tickMS = Math.round(avgTick(server.tickTimeArray)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
-			sender.sendChatToPlayer(textColor(tps) + "Tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText(textColor(tps) + "Tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)"));
 		}
 		
 	}

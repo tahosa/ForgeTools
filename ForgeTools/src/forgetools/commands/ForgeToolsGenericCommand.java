@@ -1,7 +1,9 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.Arrays;
 import java.util.List;
+
+import forgetools.ForgeTools;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;

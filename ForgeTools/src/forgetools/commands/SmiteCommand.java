@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +11,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
+import forgetools.ForgeTools;
 
 public class SmiteCommand extends ForgeToolsGenericCommand
 {
@@ -31,9 +33,9 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
-		ServerConfigurationManager serverConfig = ModLoader.getMinecraftServerInstance().getConfigurationManager();
 		MinecraftServer server = ForgeTools.server;
-		
+		ServerConfigurationManager serverConfig = server.getConfigurationManager(); 
+				
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				
 		boolean announce = false;
@@ -59,7 +61,7 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 		
 		if (found)
 		{
-			sender.sendChatToPlayer("\u00a77Smiting " + args[0]);
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a77Smiting " + args[0]));
 			
 			EntityPlayerMP target = serverConfig.getPlayerForUsername(args[0]);
 			WorldServer targetWorld = null;
@@ -78,7 +80,7 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 			EntityLightningBolt bolt = new EntityLightningBolt(targetWorld, target.posX, target.posY, target.posZ);
 			targetWorld.spawnEntityInWorld(bolt);
 			
-			target.setEntityHealth(0);	// Set the target's health to 0
+			target.setHealth(0);	// Set the target's health to 0
 			
 			// Announce the death
 			if (announce)
@@ -86,7 +88,7 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 				for (String s: players)
 				{
 					EntityPlayerMP temp = serverConfig.getPlayerForUsername(s);
-					temp.sendChatToPlayer(target.username + " has been smited by " + player.username);
+					temp.sendChatToPlayer(ChatMessageComponent.createFromText(target.username + " has been smited by " + player.username));
 				}
 			}
 			else
@@ -94,12 +96,12 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 				for (String s: players)
 				{
 					EntityPlayerMP temp = serverConfig.getPlayerForUsername(s);
-					temp.sendChatToPlayer(target.username + " died");
+					temp.sendChatToPlayer(ChatMessageComponent.createFromText(target.username + " died"));
 				}
 			}
 		}
 		else
-			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7c" + args[0] + " cannot be found"));
 	}
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)

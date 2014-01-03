@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +14,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
+import forgetools.ForgeTools;
+import forgetools.util.ItemChunkRef;
 
 /**
  * Counts items on the ground and reports counts and locations
@@ -140,16 +143,16 @@ public class DropsCommand extends ForgeToolsGenericCommand
 				// Send results
 				String prefix = (playerInWorld) ? "\u00a72" :  "" ;
 				if(kill || killall)
-					sender.sendChatToPlayer(prefix + itemsDeleted + " items removed from " + s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + itemsDeleted + " items removed from " + s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
 				if(details)
-					sender.sendChatToPlayer(prefix + worldItemCount + " items in " + s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + worldItemCount + " items in " + s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
 			}
 		}
 		
 		if(details)
 		{
 			// Send extra info if details are needed
-			sender.sendChatToPlayer("Top 5 chunks by loose item count:");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("Top 5 chunks by loose item count:"));
 			ItemChunkRef[] sortedList = ItemChunkRef.getSortedChunkList(items);
 			for (int i = 0; i < sortedList.length && i < 5; ++i)
 			{
@@ -157,11 +160,11 @@ public class DropsCommand extends ForgeToolsGenericCommand
 				Chunk c = cr.getChunk();
 				String worldName = c.worldObj.getWorldInfo().getWorldName();
 				String dimName = c.worldObj.provider.getDimensionName();
-				sender.sendChatToPlayer(worldName + " " + dimName + " (" + (c.xPosition * 16) + ", " + (c.zPosition * 16) + ") " + cr.getValue() + " items");
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText(worldName + " " + dimName + " (" + (c.xPosition * 16) + ", " + (c.zPosition * 16) + ") " + cr.getValue() + " items"));
 			}
 		}
 		
-		if (!(details || kill || killall)) sender.sendChatToPlayer(total + " loose items in all worlds");
+		if (!(details || kill || killall)) sender.sendChatToPlayer(ChatMessageComponent.createFromText(total + " loose items in all worlds"));
 	}
 	
 	public boolean canCommandSenderUseCommand(ICommandSender sender)

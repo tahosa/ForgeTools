@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,15 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import forgetools.commands.DimIDCommand;
+import forgetools.commands.DropsCommand;
+import forgetools.commands.ForgeToolsCommand;
+import forgetools.commands.HealCommand;
+import forgetools.commands.InventoryCommand;
+import forgetools.commands.LagCommand;
+import forgetools.commands.LoadedChunksCommand;
+import forgetools.commands.MobsCommand;
+import forgetools.commands.SmiteCommand;
 
 
 @Mod(modid="ForgeTools_0_6", name="Forge Tools", version="0.6")

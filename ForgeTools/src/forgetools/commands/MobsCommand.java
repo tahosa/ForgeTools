@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -15,9 +15,12 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.FMLCommonHandler;
+import forgetools.ForgeTools;
+import forgetools.util.ItemChunkRef;
 
 public class MobsCommand extends ForgeToolsGenericCommand
 {
@@ -168,18 +171,18 @@ public class MobsCommand extends ForgeToolsGenericCommand
 				
 				String prefix = (playerInWorld) ? "\u00a72" :  "" ;
 				if(details)
-					sender.sendChatToPlayer(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());					
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + amtHos + " hostile, " + amtPas + " passive, and " + amtNPC + " NPCs spawned in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));					
 				
 				if(kill)
-					sender.sendChatToPlayer(prefix + amtRemoved + " " + type + " mobs removed from "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName());
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + amtRemoved + " " + type + " mobs removed from "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
 				
 				total += amtHos + amtPas + amtNPC;
 			}
-			sender.sendChatToPlayer(total + " mobs in all worlds.");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText(total + " mobs in all worlds."));
 			if(details)
 			{
 				// Send extra info if details are needed
-				sender.sendChatToPlayer("Top 5 chunks by mob count:");
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText("Top 5 chunks by mob count:"));
 				ItemChunkRef[] sortedList = ItemChunkRef.getSortedChunkList(mobs);
 				for (int i = 0; i < sortedList.length && i < 5; ++i)
 				{
@@ -187,7 +190,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 					Chunk c = cr.getChunk();
 					String worldName = c.worldObj.getWorldInfo().getWorldName();
 					String dimName = c.worldObj.provider.getDimensionName();
-					sender.sendChatToPlayer(worldName + " " + dimName + " (" + (c.xPosition * 16) + ", " + (c.zPosition * 16) + ") " + cr.getValue() + " mobs");
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(worldName + " " + dimName + " (" + (c.xPosition * 16) + ", " + (c.zPosition * 16) + ") " + cr.getValue() + " mobs"));
 				}
 			}
 		}

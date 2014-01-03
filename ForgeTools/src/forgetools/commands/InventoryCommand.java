@@ -1,4 +1,4 @@
-package forgetools.common;
+package forgetools.commands;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.FMLCommonHandler;
+import forgetools.ForgeTools;
 
 public class InventoryCommand extends ForgeToolsGenericCommand
 {
@@ -79,7 +81,7 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 		            }
 		        }
 				
-				sender.sendChatToPlayer("\u00a77Dropping " + args[0] + "'s items");
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a77Dropping " + args[0] + "'s items"));
 			} else if (list) {
 				for (int temp = 0; temp < target.inventory.getSizeInventory(); temp++)
 				{
@@ -87,7 +89,7 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 						if (tempItem != null)
 						{
 							String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
-							sender.sendChatToPlayer(args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));
+							sender.sendChatToPlayer(ChatMessageComponent.createFromText(args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString)));
 						}
 				}
 			} else if (find) {
@@ -102,18 +104,18 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 						String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
 						if (searchString(searchTerm, tempString.toLowerCase()))
 						{
-							sender.sendChatToPlayer("\u00a7c" + args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString));
+							sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7c" + args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString)));
 							itemFound = true;
 						}
 					}
 				}
 				
 				if (!itemFound) {
-					sender.sendChatToPlayer("\u00a77" + args[0] + " does not have any items with " + args[2] + " in the name");
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a77" + args[0] + " does not have any items with " + args[2] + " in the name"));
 				}
 			}
 		} else
-			sender.sendChatToPlayer("\u00a7c" + args[0] + " cannot be found");
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7c" + args[0] + " cannot be found"));
 	}
 	
 	String parseName (String s)
