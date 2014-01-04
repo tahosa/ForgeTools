@@ -9,7 +9,7 @@ Additionally, it provides some basic tools for cleaning up entities on the
 server, and enabling the commands to be used by a set of non-OP players
 configured by an OP or server admin.
 
-ForgeTools is currently running off of Forge 9.11.1.953 and MCP v8.11 for Minecraft
+ForgeTools is currently running off of Forge 9.11.1.965 and MCP v8.11 for Minecraft
 1.6.4.  It is behind to match the development of the Feed the Beast modpack so
 server managers can use it with FTB.
 
