@@ -9,7 +9,6 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import forgetools.ForgeTools;
@@ -31,8 +30,11 @@ public class HealCommand extends ForgeToolsGenericCommand
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		ServerConfigurationManager serverConfig = ModLoader.getMinecraftServerInstance().getConfigurationManager();
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);
+		
+		ServerConfigurationManager serverConfig = ForgeTools.server.getConfigurationManager();
 		MinecraftServer server = ForgeTools.server;
 		
 		boolean full = false, hp = false, food = false;
@@ -98,12 +100,14 @@ public class HealCommand extends ForgeToolsGenericCommand
 		{
 			EntityPlayerMP target = serverConfig.getPlayerForUsername(args[0]);
 			
+			String healedBy = (player != null) ? player.username : "God";	
+			
 			if (full && !hp && !food)
 			{
 				sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7aHealing " + args[0] + "'s HP and hunger to full."));
 				target.heal(20);
 				target.getFoodStats().addStats(20, 20);
-				target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + player.username + " has healed your HP and hunger to full."));
+				target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + healedBy + " has healed your HP and hunger to full."));
 			} 
 			else
 			{
@@ -112,13 +116,13 @@ public class HealCommand extends ForgeToolsGenericCommand
 				{
 					target.heal(amt);
 					
-					target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + player.username + " has healed your HP by " + (double)(amt) / 2 + " hearts."));
+					target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + healedBy + " has healed your HP by " + (double)(amt) / 2 + " hearts."));
 				}
 				else
 				{
 					target.getFoodStats().addStats(amt, 20);
 					
-					target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + player.username + " has healed your hunger by " + (double)(amt) / 2 + " drumsticks."));
+					target.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7a" + healedBy + " has healed your hunger by " + (double)(amt) / 2 + " drumsticks."));
 				}
 			}
 		}

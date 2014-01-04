@@ -10,7 +10,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import forgetools.ForgeTools;
@@ -24,7 +23,7 @@ public class LagCommand extends ForgeToolsGenericCommand
 	
 	public String getCommandUsage(ICommandSender par1ICommandSender)
 	{
-		return "/" + cmdName + " [detail | d | current | c]";
+		return "/" + cmdName + " [detail | d | current | c | <dim_id>]";
 	}
 
 	public void processCommand(ICommandSender sender, String[] args)
@@ -32,7 +31,12 @@ public class LagCommand extends ForgeToolsGenericCommand
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
 		boolean details = false, current = false;
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);
+		
+		Integer dim = null;
 		
 		if (args.length > 1) throw new WrongUsageException(getCommandUsage(sender));
 		else if (args.length == 1)
@@ -41,21 +45,48 @@ public class LagCommand extends ForgeToolsGenericCommand
 				details = true;
 			else if (args[0].equalsIgnoreCase("current") || args[0].equalsIgnoreCase("c"))
 				current = true;
-			else throw new WrongUsageException(getCommandUsage(sender));
+			else 
+			{
+				try
+				{
+					dim = Integer.parseInt(args[0]);
+				}
+				catch(Exception e)
+				{
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText("Invalid dimension ID."));
+					return;
+				}
+			}
 		}
 		
 		MinecraftServer server = ForgeTools.server;
 		
-		if(current)
+		if(current || dim != null)
 		{
-			int dimension = player.dimension;
-			String dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
+			if(current && sender.getCommandSenderName().equals("Server"))
+			{
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText("Invalid option. As the console you are not in a dimension!"));
+				return;
+			}
+			
+			int dimension = (dim != null) ? dim : player.dimension;
+			String dimName;
+			try
+			{
+				dimName = server.worldServerForDimension(dimension).provider.getDimensionName();
+			}
+			catch (Exception ex)
+			{
+				sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a74" + dim + " is not a valid dimension id"));
+				return;
+			}
 			long[] tickTimes = server.worldTickTimes.get(dimension);
 			double tickMS = Math.round(avgTick(tickTimes)*1.0E-5D)/10d;
 			double tickPct = (tickMS < 50) ? 100d : Math.round(50d/tickMS * 1000)/10d;
 			double tps = (tickMS < 50) ? 20d : Math.round((1000d/tickMS) * 10d) / 10d;
 			sender.sendChatToPlayer(ChatMessageComponent.createFromText(textColor(tps) + dimName + " tick: "+tps+" tps ("+tickMS + "ms, "+ tickPct+"%)"));
 		}
+		
 		else if (details)
 		{
 			Hashtable<Integer,long[]> worldTickTimes = server.worldTickTimes;

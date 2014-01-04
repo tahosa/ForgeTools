@@ -13,7 +13,6 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -47,7 +46,10 @@ public class DropsCommand extends ForgeToolsGenericCommand
 		// If we are on the server, return
 		// TODO: Add ability to run commands in limited scope from console
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);	// Plaer object of player who sent command
+		
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);	// Player object of player who sent command
 				
 		MinecraftServer server = ForgeTools.server;
 		
@@ -98,7 +100,7 @@ public class DropsCommand extends ForgeToolsGenericCommand
 			// Iterate over loaded worlds
 			for(WorldServer s : server.worldServers)
 			{
-				boolean playerInWorld = s.getWorldInfo().equals(player.worldObj.getWorldInfo());
+				boolean playerInWorld = (player != null) ? s.getWorldInfo().equals(player.worldObj.getWorldInfo()) : false;
 				int worldItemCount = 0;
 				int itemsDeleted = 0;
 				
@@ -120,7 +122,8 @@ public class DropsCommand extends ForgeToolsGenericCommand
 						
 						++worldItemCount;
 						
-						if(playerInWorld && (killall  || (kill && e.getDistanceToEntity(player) <= radius)))
+						if( (sender.getCommandSenderName().equals("Server") && (kill || killall)) || 					// Console is sending the command, so no player is needed
+								(playerInWorld && (killall  || (kill && e.getDistanceToEntity(player) <= radius))))		// Player wants to kill items around them
 						{
 							e.setDead();
 							++itemsDeleted;
@@ -147,6 +150,13 @@ public class DropsCommand extends ForgeToolsGenericCommand
 				if(details)
 					sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + worldItemCount + " items in " + s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
 			}
+		}
+		else
+		{
+			long wait = new Date().getTime() - (lastCheck.getTime() + (ForgeTools.timeout * 1000));
+			wait = (long)Math.abs(wait) / 1000;
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7eYou must wait " + wait + " seconds before trying again or use the force option."));
+			return;
 		}
 		
 		if(details)

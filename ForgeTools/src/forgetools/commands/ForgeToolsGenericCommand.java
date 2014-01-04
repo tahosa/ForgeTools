@@ -8,7 +8,6 @@ import forgetools.ForgeTools;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.src.ModLoader;
 
 /**
  * Base class for all ForgeTools commands. Has the framework for dynamic naming
@@ -29,16 +28,18 @@ public abstract class ForgeToolsGenericCommand extends CommandBase {
 		
 		cmdName = tmp[0];
 		if(tmp.length > 1)
-			cmdAliases = Arrays.copyOfRange(tmp, 1,  tmp.length-1);
+			cmdAliases = Arrays.copyOfRange(tmp, 1,  tmp.length);
 		else
 			cmdAliases = new String[] {};
 	}
 
+	@Override
 	public String getCommandName()
 	{
 		return cmdName;
 	}
 	
+	@Override
 	public List getCommandAliases()
 	{
 		return Arrays.asList(cmdAliases);
@@ -50,11 +51,10 @@ public abstract class ForgeToolsGenericCommand extends CommandBase {
 	 * @return True if they are the server or OP, false othewise.
 	 */
 	protected boolean hasOpPermissions(ICommandSender sender)
-	{
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (!player.username.equalsIgnoreCase("Server") && !ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()))
-			return false;
-		return true;
+	{	
+		if (sender.getCommandSenderName().equals("Server") || (ForgeTools.server.getConfigurationManager().getOps().contains(sender.getCommandSenderName().trim().toLowerCase())))
+			return true;
+		return false;
 	}
 	
 	/**
@@ -63,10 +63,8 @@ public abstract class ForgeToolsGenericCommand extends CommandBase {
 	 * @return True if they are the server, OP, or on the list of advanced users in the config file. False otherwise.
 	 */
 	protected boolean hasEnhancedPermissions(ICommandSender sender) {
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-		if (player.username.equalsIgnoreCase("Server") 
-				|| ModLoader.getMinecraftServerInstance().getConfigurationManager().getOps().contains(player.username.trim().toLowerCase()) 
-				|| ForgeTools.advancedUsers.contains(player.username.trim().toLowerCase()))
+		if(hasOpPermissions(sender)
+				|| ForgeTools.advancedUsers.contains(sender.getCommandSenderName().trim().toLowerCase()))
 			return true;
 		return false;
 	}

@@ -10,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import forgetools.ForgeTools;
@@ -32,10 +31,8 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		
-		ServerConfigurationManager serverConfig = ModLoader.getMinecraftServerInstance().getConfigurationManager();
+		ServerConfigurationManager serverConfig = ForgeTools.server.getConfigurationManager();
 		MinecraftServer server = ForgeTools.server;
-		
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				
 		boolean drop = false, list = false, find = false;
 		
@@ -82,17 +79,26 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 		        }
 				
 				sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a77Dropping " + args[0] + "'s items"));
-			} else if (list) {
+			} 
+			else if (list) 
+			{
+				boolean empty = true;
 				for (int temp = 0; temp < target.inventory.getSizeInventory(); temp++)
 				{
 					ItemStack tempItem = target.inventory.getStackInSlot(temp);
-						if (tempItem != null)
-						{
-							String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
-							sender.sendChatToPlayer(ChatMessageComponent.createFromText(args[0] + " has " + tempItem.stackSize + " of " + parseName(tempString)));
-						}
+					
+					if (tempItem != null)
+					{
+						empty = false;
+						String tempString = Item.itemsList[tempItem.getItem().itemID].getItemDisplayName(tempItem);
+						sender.sendChatToPlayer(ChatMessageComponent.createFromText(tempItem.stackSize + " of " + parseName(tempString)));
+					}		
 				}
-			} else if (find) {
+				if(empty)
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText(args[0] + "\'s inventory is empty."));
+			} 
+			else if (find) 
+			{
 				int temp = 0;
 				boolean itemFound = false;
 				for (temp = 0; temp < target.inventory.getSizeInventory(); temp++)
@@ -110,11 +116,13 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 					}
 				}
 				
-				if (!itemFound) {
+				if (!itemFound) 
+				{
 					sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a77" + args[0] + " does not have any items with " + args[2] + " in the name"));
 				}
 			}
-		} else
+		} 
+		else
 			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7c" + args[0] + " cannot be found"));
 	}
 	
@@ -122,7 +130,7 @@ public class InventoryCommand extends ForgeToolsGenericCommand
 	{
 		String tokens[] = s.split("\\.");
 		
-		return tokens[1];
+		return tokens[tokens.length - 1];
 	}
 	
 	String parseSearchString(String s)

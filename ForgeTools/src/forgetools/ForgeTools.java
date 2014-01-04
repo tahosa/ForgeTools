@@ -12,9 +12,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PreInit;
-import cpw.mods.fml.common.Mod.ServerStarting;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -30,7 +28,7 @@ import forgetools.commands.MobsCommand;
 import forgetools.commands.SmiteCommand;
 
 
-@Mod(modid="ForgeTools_0_6", name="Forge Tools", version="0.6")
+@Mod(modid="ForgeTools_1_0", name="Forge Tools", version="1.0")
 @NetworkMod(clientSideRequired=false, serverSideRequired=false)
 
 public class ForgeTools
@@ -53,12 +51,12 @@ public class ForgeTools
 	public static float killRadius;
 	public static int timeout;
 	
-	@Init
+	@EventHandler
 	public void Init(FMLInitializationEvent event)
 	{
 	}
 	
-	@PreInit
+	@EventHandler
 	public void PreInit(FMLPreInitializationEvent event)
 	{
 		commandsToLoad = new HashMap<String, String>();
@@ -66,7 +64,7 @@ public class ForgeTools
 		reloadConfig();
 	}
 	
-	@ServerStarting
+	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event)
 	{
 		server = FMLCommonHandler.instance().getMinecraftServerInstance();

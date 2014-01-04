@@ -9,7 +9,6 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 
 public class ForgeToolsCommand extends ForgeToolsGenericCommand {
@@ -52,8 +51,10 @@ public class ForgeToolsCommand extends ForgeToolsGenericCommand {
 				for (String s : ForgeTools.advancedUsers)
 					userList += s + ", ";
 				userList = userList.substring(0, userList.length()-2);
-				
-				sender.sendChatToPlayer(ChatMessageComponent.createFromText("ForgeTools user list: " + userList));
+				if(userList.length() < 1)
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText("ForgeTools user list is empty."));
+				else
+					sender.sendChatToPlayer(ChatMessageComponent.createFromText("ForgeTools user list: " + userList));
 			}
 			else if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("r"))
 				sender.sendChatToPlayer(ChatMessageComponent.createFromText("ForgeTools user list reloaded"));

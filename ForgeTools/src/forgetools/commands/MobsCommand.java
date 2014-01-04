@@ -14,7 +14,6 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -33,15 +32,20 @@ public class MobsCommand extends ForgeToolsGenericCommand
 		super(cmds);
 	}
 
+	@Override
 	public String getCommandUsage(ICommandSender par1ICommandSender)
     {
     	return "/" + cmdName + " [detail | kill <passive | hostile | npc | all> [radius] ] [force]";
     }
 
+	@Override
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);
 				
 		MinecraftServer server = ForgeTools.server;
 		int amtHos = 0, amtPas = 0, amtNPC = 0;
@@ -109,7 +113,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 				amtHos = 0;
 				amtPas = 0;
 				amtNPC = 0;
-				boolean playerInWorld = s.getWorldInfo().equals(player.worldObj.getWorldInfo());
+				boolean playerInWorld = (player != null) ? s.getWorldInfo().equals(player.worldObj.getWorldInfo()) : false;
 				int amtRemoved = 0;
 				for(int id=0; id < s.loadedEntityList.size(); id++)
 				{
@@ -127,7 +131,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 					
 					if(m instanceof EntityMob)
 					{
-						if(kill && type.equals("hostile") && ((EntityLiving)m).getDistanceToEntity(player) <= radius)
+						if(kill && (type.equals("hostile") || type.equals("all")) && (player == null || ((EntityLiving)m).getDistanceToEntity(player) <= radius))
 						{
 							((EntityLiving) m).setDead();
 							amtRemoved++;
@@ -137,7 +141,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 					}
 					else if((m instanceof IAnimals) && !(s.loadedEntityList.get(id) instanceof INpc))
 					{
-						if(kill && type.equals("passive") && ((EntityLiving)m).getDistanceToEntity(player) <= radius)
+						if(kill && (type.equals("passive") || type.equals("all")) && (player == null || ((EntityLiving)m).getDistanceToEntity(player) <= radius))
 						{
 							((EntityLiving) m).setDead();
 							amtRemoved++;
@@ -147,7 +151,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 					}
 					else if(m instanceof INpc)
 					{
-						if(kill && type.equals("npc") && ((EntityLiving)m).getDistanceToEntity(player) <= radius)
+						if(kill && (type.equals("npc") || type.equals("all")) && (player == null || ((EntityLiving)m).getDistanceToEntity(player) <= radius))
 						{
 							((EntityLiving) m).setDead();
 							amtRemoved++;
@@ -178,6 +182,7 @@ public class MobsCommand extends ForgeToolsGenericCommand
 				
 				total += amtHos + amtPas + amtNPC;
 			}
+			
 			sender.sendChatToPlayer(ChatMessageComponent.createFromText(total + " mobs in all worlds."));
 			if(details)
 			{
@@ -193,6 +198,13 @@ public class MobsCommand extends ForgeToolsGenericCommand
 					sender.sendChatToPlayer(ChatMessageComponent.createFromText(worldName + " " + dimName + " (" + (c.xPosition * 16) + ", " + (c.zPosition * 16) + ") " + cr.getValue() + " mobs"));
 				}
 			}
+		}
+		else
+		{
+			long wait = new Date().getTime() - (lastCheck.getTime() + (ForgeTools.timeout * 1000));
+			wait = (long)Math.abs(wait) / 1000;
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00a7eYou must wait " + wait + " seconds before trying again or use the force option."));
+			return;
 		}
 	}
 	

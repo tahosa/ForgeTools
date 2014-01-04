@@ -18,6 +18,12 @@ public class DimIDCommand extends ForgeToolsGenericCommand
 	
 	public void processCommand(ICommandSender sender, String[] args)
 	{
+		if(sender.getCommandSenderName().equals("Server"))
+		{
+			sender.sendChatToPlayer(ChatMessageComponent.createFromText("The console cannot be in a dimension!"));
+			return;
+		}
+		
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
 		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		

@@ -10,7 +10,6 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -36,7 +35,9 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 		MinecraftServer server = ForgeTools.server;
 		ServerConfigurationManager serverConfig = server.getConfigurationManager(); 
 				
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);
 				
 		boolean announce = false;
 		
@@ -88,7 +89,8 @@ public class SmiteCommand extends ForgeToolsGenericCommand
 				for (String s: players)
 				{
 					EntityPlayerMP temp = serverConfig.getPlayerForUsername(s);
-					temp.sendChatToPlayer(ChatMessageComponent.createFromText(target.username + " has been smited by " + player.username));
+					String smitedBy = (player != null) ? player.username : "God";
+					temp.sendChatToPlayer(ChatMessageComponent.createFromText(target.username + " has been smited by " + smitedBy));
 				}
 			}
 			else

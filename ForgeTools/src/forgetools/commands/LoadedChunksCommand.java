@@ -1,16 +1,19 @@
 package forgetools.commands;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Sets;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -35,7 +38,10 @@ public class LoadedChunksCommand extends ForgeToolsGenericCommand
 	public void processCommand(ICommandSender sender, String[] args)
 	{
 		if(!FMLCommonHandler.instance().getEffectiveSide().isServer()) return;
-		EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+		
+		EntityPlayerMP player = null;
+		if(!sender.getCommandSenderName().equals("Server"))
+			player = getCommandSenderAsPlayer(sender);
 		
 		MinecraftServer server = ForgeTools.server;
 		boolean details = false;
@@ -46,23 +52,25 @@ public class LoadedChunksCommand extends ForgeToolsGenericCommand
 		else throw new WrongUsageException(getCommandUsage(sender));
 		
 		int total = 0, totalTix = 0;
+		
 		for(WorldServer s : server.worldServers)
 		{
 			World tmp = ((World) s);
 			ImmutableSetMultimap<ChunkCoordIntPair, Ticket> forcedChunks = tmp.getPersistentChunks();
-			int amt = 0, tickets = 0;
+			Set loadedChunks = new LinkedHashSet<ChunkCoordIntPair>();
 			for(ChunkCoordIntPair c : forcedChunks.keys())
 			{
 				for(Ticket t : forcedChunks.get(c))
 				{
-					amt += t.getChunkList().size();
-					tickets++;
+					loadedChunks = Sets.union(t.getChunkList(),  loadedChunks);
 				}
 			}
-			String prefix = (s.getWorldInfo().equals(player.worldObj.getWorldInfo())) ? "\u00a72" :  "" ;
-			if (details) sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + amt + " force loaded chunks (" + tickets + " tickets) in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
-			total += amt;
-			totalTix += tickets;
+			
+			boolean playerInWorld = (player != null) ? s.getWorldInfo().equals(player.worldObj.getWorldInfo()) : false;
+			
+			String prefix = (playerInWorld) ? "\u00a72" :  "" ;
+			if (details) sender.sendChatToPlayer(ChatMessageComponent.createFromText(prefix + loadedChunks.size() + " force loaded chunks in "+s.provider.worldObj.getWorldInfo().getWorldName()+" " + s.provider.getDimensionName()));
+			total += loadedChunks.size();
 		}
 		
 		if(!details) sender.sendChatToPlayer(ChatMessageComponent.createFromText(total + " force loaded chunks in all worlds"));
