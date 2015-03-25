@@ -1,0 +1,9 @@
+/eclipse
+/.project
+/.settings
+/.classpath
+.DS_Store
+/.gradle
+/bin
+/.metadata
+tmp/
