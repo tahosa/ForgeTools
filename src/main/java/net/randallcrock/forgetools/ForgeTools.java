@@ -19,8 +19,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import net.randallcrock.forgetools.commands.*;
 
 
-@Mod(modid="forgetools", name="Forge Tools", version="1.1")
-
+@Mod(modid="forgetools", name="Forge Tools", version="1.1.1", acceptableRemoteVersions="*")
 public class ForgeTools
 {
 	private static final String dropsDName = "drops";
